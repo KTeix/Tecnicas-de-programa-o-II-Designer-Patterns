@@ -7,7 +7,11 @@ O aplicativo oferece funcionalidades abrangentes, permitindo a criação de proj
 Membros da Equipe:
 
 Adilson Messias da Silva Junior
+
 Ana Paula
+
 Guilherme Inácio
+
 Kleyton de Souza Teixeira
+
 Vitor Ruis da Silva
