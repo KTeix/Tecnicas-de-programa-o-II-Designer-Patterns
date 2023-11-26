@@ -1,0 +1,103 @@
+from abc import ABC, abstractmethod
+
+class Projeto:
+    def __init__(self, estrategia_acompanhamento):
+        self.observers = []
+        self.update = None  # Estado do projeto a ser enviado aos observadores
+        self.relatorio = Relatorio()  # Instância do módulo de relatórios
+        self.estrategia_acompanhamento = estrategia_acompanhamento
+
+    def add_observer(self, observer):
+        self.observers.append(observer)
+
+    def remove_observer(self, observer):
+        self.observers.remove(observer)
+
+    def notify_observers(self):
+        for observer in self.observers:
+            observer.update(self.update)
+
+    def set_project_update(self, update):
+        self.update = update
+        self.notify_observers()
+
+    def gerar_relatorio(self):
+        self.relatorio.gerar_relatorio(self)
+
+    def acompanhar_progresso(self):
+        self.estrategia_acompanhamento.acompanhar_progresso(self.update)
+
+
+class Equipe:
+    def update(self, update):
+        print(f"Equipe notificada sobre a atualização: {update}")
+
+
+class Relatorio:
+    def gerar_relatorio(self, projeto):
+        # Lógica para gerar relatório
+        print("Relatório gerado com sucesso.")
+
+
+class EstrategiaAcompanhamento(ABC):
+    @abstractmethod
+    def acompanhar_progresso(self, update):
+        pass
+
+class AcompanhamentoDetalhado(EstrategiaAcompanhamento):
+    def acompanhar_progresso(self, update):
+        print(f"Acompanhamento detalhado: {update}")
+        print("Detalhes específicos do acompanhamento detalhado.")
+
+class AcompanhamentoSimples(EstrategiaAcompanhamento):
+    def acompanhar_progresso(self, update):
+        print(f"Acompanhamento simples: {update}")
+        print("Informações básicas do acompanhamento simples.")
+
+
+class ProjetoFactory(ABC):
+    @abstractmethod
+    def criar_projeto(self):
+        pass
+
+class ProjetoDetalhadoFactory(ProjetoFactory):
+    def criar_projeto(self):
+        return Projeto(estrategia_acompanhamento=AcompanhamentoDetalhado())
+
+class ProjetoSimplesFactory(ProjetoFactory):
+    def criar_projeto(self):
+        return Projeto(estrategia_acompanhamento=AcompanhamentoSimples())
+
+
+if __name__ == "__main__":
+    # Usando a Factory Method para criar projetos com diferentes estratégias
+    factory_detalhado = ProjetoDetalhadoFactory()
+    projeto_detalhado = factory_detalhado.criar_projeto()
+
+    factory_simples = ProjetoSimplesFactory()
+    projeto_simples = factory_simples.criar_projeto()
+
+    # Adicionando equipes como observadores
+    equipe1 = Equipe()
+    equipe2 = Equipe()
+
+    projeto_detalhado.add_observer(equipe1)
+    projeto_detalhado.add_observer(equipe2)
+
+    projeto_simples.add_observer(equipe1)
+    projeto_simples.add_observer(equipe2)
+
+    
+    projeto_detalhado.set_project_update("Nova tarefa no projeto detalhado.")
+
+    
+    projeto_detalhado.acompanhar_progresso()
+
+    
+    projeto_detalhado.gerar_relatorio()
+
+    projeto_simples.set_project_update("Nova tarefa no projeto simples.")
+
+    projeto_simples.acompanhar_progresso()
+
+    projeto_simples.gerar_relatorio()
